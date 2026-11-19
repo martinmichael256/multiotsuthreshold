@@ -1,0 +1,32 @@
+# Library Set-Up 
+import matplotlib.pyplot as plt 
+import numpy as np 
+import cv2 
+
+from skimage import data, io, img_as_ubyte 
+from skimage.filters import threshold_multiotsu 
+
+pip install rasterio 
+import rasterio 
+from rasterio.plot import show 
+
+# Read Index X 
+image = io.imread("indexX.tif") 
+show(image) 
+image = rasterio.open("indexX.tif") 
+show(image) 
+
+# Multi-Otsu’s Thresholding Values for 3 classes 
+print(image) 
+image[np.isnan(image)] = np.nanmin(image) 
+thresholds = threshold_multiotsu(image, classes=3) 
+print(thresholds) 
+
+# float32 to uint8 
+regions = np.digitize(image, bins=thresholds) 
+output = img_as_ubyte(regions) 
+
+# Threshold Mapping 
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 10.0)) 
+ax.imshow(output, cmap='grey') 
+ax.legend() 
